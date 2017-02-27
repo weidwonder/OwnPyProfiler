@@ -76,13 +76,15 @@ class VariableTypes:
     IN_CLASS = 2
 
 
-silence_attrs = {'__class__', '__new__'}
+exclude_attrs = set(dir(object) + dir(type) + ['__getattr__', '__setattr__']) - {'__ge__', '__gt__', '__init__', '__le__',
+                                                                                 '__lt__', '__ne__', '__repr__',
+                                                                                 '__str__'}
 
 
 def _wrap_timing(obj, _type=VariableTypes.FREE):
     if inspect.isclass(obj):
         for attr in dir(obj):
-            if attr in silence_attrs: continue
+            if attr in exclude_attrs: continue
             try:
                 new_attr, to_set = _wrap_timing(getattr(obj, attr), _type=VariableTypes.IN_CLASS)
                 if to_set:
@@ -95,7 +97,7 @@ def _wrap_timing(obj, _type=VariableTypes.FREE):
             # obj is a classmethod
             if _type is VariableTypes.IN_CLASS:
                 # obj is a reference to a class method
-                return classmethod(obj.__func__), True
+                return classmethod(timing(obj.__func__)), True
             else:
                 return obj, False
         else:
@@ -104,8 +106,16 @@ def _wrap_timing(obj, _type=VariableTypes.FREE):
     if inspect.isfunction(obj) and obj.__code__.co_filename.startswith(SETTINGS['ROOT_DIR']):
         if _type is VariableTypes.IN_CLASS:
             # obj is a staticmethod
-            return staticmethod(obj.__func__), True
+            return staticmethod(timing(obj.__func__)), True
         else:
             # obj is a free function
             return timing(obj), True
+    if isinstance(obj, (list, tuple, set)):
+        for o in obj:
+            _wrap_timing(o)
+    if isinstance(obj, dict):
+        for k, v in obj:
+            o, to_set = _wrap_timing(v)
+            if to_set:
+                obj[k] = o
     return obj, False
