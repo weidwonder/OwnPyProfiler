@@ -1,4 +1,13 @@
 # OwnPyProfiler
-A profiler only profile your code time cost
+A profiler only profile the code you specify.
 
-// TODO(weidwonder): add more descriptions.
+# Usage
+
+``` python
+from own_py_profiler import Profiling
+
+with Profiling('..'):  # the param is the path of codes you want to profile.
+    my_function()
+```
+
+Also can find demo in `test.test_timing`.

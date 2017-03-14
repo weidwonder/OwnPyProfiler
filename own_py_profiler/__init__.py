@@ -1,9 +1,9 @@
-from profiler import install_importer, activate_timing, show_timing_cost
-from wrapper import timing
+# coding=utf-8
+
+__version__ = '0.2.0'
+
+from profiling import Profiling
 
 __all__ = [
-    'timing',
-    'install_importer',
-    'activate_timing',
-    'show_timing_cost',
+    'Profiling',
 ]

@@ -1,10 +1,4 @@
-from own_py_profiler import show_timing_cost, activate_timing, install_importer
-
-install_importer('..')
-
-from async_iter import AsyncIterHandler
-
-multitasking = AsyncIterHandler('threading')
+from own_py_profiler import Profiling
 
 
 def chain(inst):
@@ -23,21 +17,17 @@ class C(object):
     def f(self):
         for i in range(3):
             chain(self)
-        multitasking([(chain, (self,))] * 3)
 
     @classmethod
     def h(cls):
-        print 'haha'
+        print 'h'
 
     @staticmethod
     def x():
-        print 'heihei'
+        pass
 
 
 c = C()
 
-activate_timing(locals())
-
-c.f()
-
-show_timing_cost()
+with Profiling('..'):
+    c.f()
