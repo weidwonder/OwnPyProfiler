@@ -79,14 +79,14 @@ def profiler(frame, event, func):
     if (not frame_filename.startswith(SETTINGS['ROOT_DIR']) or frame_filename.startswith(current_path)):
         return
     stack = _get_stack()
-    if event in ('call'):
+    if event in ('call', ):
         node = FrameNode(frame)
         parent = stack[-1]
         parent.children.append(node)
         stack.append(node)
         node.start = datetime.datetime.now()
 
-    elif event in ('return') and len(stack) > 1:
+    elif event in ('return', ) and len(stack) > 1:
         node = stack.pop()
         node.end = datetime.datetime.now()
         time_cost = node.end - node.start
